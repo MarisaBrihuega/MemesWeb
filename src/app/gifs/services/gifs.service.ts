@@ -1,5 +1,5 @@
 import { Gif, SearchGifsResponse } from './../interface/gifs.interface';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -10,6 +10,7 @@ export class GifsService {
   private historySearch: string[] = [];
   private apiKey: string = '8rt89WSnD25ZNWqIRYRHolnK5FLqz2qf';
   public results: Gif[] = [];
+  private serviceUrl: string = 'https://api.giphy.com/v1/gifs';
 
   constructor(private http: HttpClient) {
     //Si es nulo, que me devuelva un array vacio: []. Tambien podria ponerse con condicionales
@@ -40,10 +41,15 @@ export class GifsService {
        *coger los valores del Local Storage y pasarlos a al historial 
        *de la columna de la izquierda. Nos dirigimos al constructor del servicio.
        */
-
     }
 
-    this.http.get<SearchGifsResponse>(`https://api.giphy.com/v1/gifs/search?api_key=8rt89WSnD25ZNWqIRYRHolnK5FLqz2qf&q=${term}&limit=10`).subscribe(resp => {
+    const params = new HttpParams()
+      .set('api_key', this.apiKey)
+      .set('limit', '10')
+      .set('q', term);
+    //console.log(params.toString());
+
+    this.http.get<SearchGifsResponse>(`${this.serviceUrl}/search`, { params }).subscribe(resp => {
       console.log(resp.data);
       this.results = resp.data;
 
